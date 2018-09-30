@@ -1,2 +1,2 @@
-# time_series
+# char_time_series
 Time Series Course Project
