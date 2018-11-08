@@ -19,8 +19,27 @@ def loggarma(X,Y,p,q,max_iter,t_0):
     deta_alpha[t_0]= 1./alpha
 
     for i in range(max_iter):
-        for j in range(deta_beta):
-            if j > 1:
-                deta_
+        dold_beta = deta_beta
+        dold_phi = deta_phi
+        dold_theta = deta_theta
+        dold_alpha = deta_alpha
+
+        ##Check for convergence
+
+##Update gradients
+        deta_beta = X[:,0:beta.shape[0]]
+        for j in range(X.shape[0]):
+            if range
+            deta_beta[j:,j] =deta_beta[j:,j] - np.dot(beta,deta[])
     
-    
+        
+        mu = np.exp(eta)
+        R = np.dot(deta_beta,beta) + np.dot(deta_phi,phi)+ np.dot(deta_theta,theta) + np.dot(deta_alpha,alpha)  + h*(Y - mu)*mu
+        X_R = np.concatenate((deta_beta,deta_phi,deta_theta,deta_alpha),axis = 1)
+        wls = sm.api.WLS(R,X_R,weights = mu)
+        res_wls = mod_wls.fit()
+        beta = res_wls.params[:beta.shape[0]]
+        phi = res_wls.params[beta.shape[0]:p+beta.shape[0]]
+        theta = res_wls.params[beta.shape[0]+p:beta.shape[0]+p+q]
+        alpha = int(res_wls.params[end])
+        
