@@ -10,7 +10,7 @@ from scipy.stats import multivariate_normal
 X = multivariate_normal.rvs(mu, Sigma, N)
 
 from random import randint
-P = 3; Q = 12
+P = 3; Q = 4
 t_o = randint(max(P, Q), N)
 
 Beta = np.random.uniform(-1, 1, D)
