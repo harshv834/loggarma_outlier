@@ -40,7 +40,7 @@ def loggarma(X,Y,p,q,max_iter,t_0):
             phi_block = np.log(np.flip(Y_block_p,axis=0)) - np.dot(np.flip(X_block_p,axis=0),beta)
             theta_block = np.log(np.flip(Y_block_q),axis=0)) - eta_block_q
             eta[j + max_num] += np.inner(phi_block,phi) + np.inner(theta_block,theta)
-
+            
         ##Check for convergence
         
 ##Update gradients
@@ -48,7 +48,9 @@ def loggarma(X,Y,p,q,max_iter,t_0):
         #np.inner(np.flip(phi1,axis=0).transpose(),a.transpose())
         for j in range(X.shape[0] - phi.shape[0]):
             X_block = X[j:j + phi.shape[0],:].transpose()
+
             Y_block = Y[j:j+ phi.shape[0],:]
+            
             deta_beta[j+phi.shape[0],:] -= np.inner(np.flip(phi,axis=0).transpose(),X_block).transpose()
             deta_phi[j+phi.shape[0],:] = np.log(np.flip(Y_block,axis=0)) - np.dot(np.flip(X_block,axis=0),beta)
 
@@ -60,10 +62,16 @@ def loggarma(X,Y,p,q,max_iter,t_0):
             dtheta_block = dold_theta[j:j+theta.shape[0],:].transpose()
 
             # update after multiplying with current values of theta.
+            Y_block_q = Y[j:j + theta.shape[0]]
+            eta_block_q = eta[j:j + theta.shape[0]]
+            deta_theta[j+theta.shape[0]] = np.log(Y_block_q) - np.flip(eta_block_q,axis=0)
             deta_beta[j+theta.shape[0],:] -= np.inner(np.flip(theta,axis=0).transpose(),dbeta_block).transpose()
             deta_phi[j+theta.shape[0],:] -= np.inner(np.flip(theta,axis=0).transpose(),dphi_block).transpose()
-            deta_phi[j+theta.shape[0],:] -= np.inner(np.flip(theta,axis=0).transpose(),dtheta_block).transpose()
+            deta_theta[j+theta.shape[0],:] -= np.inner(np.flip(theta,axis=0).transpose(),dtheta_block).transpose()
+        
 
+        deta_alpha = np.zeros([Y.shape[0],1])
+        deta_alpha[t_0]= 1./alpha
             
 
    
@@ -78,3 +86,5 @@ def loggarma(X,Y,p,q,max_iter,t_0):
         theta = res_wls.params[beta.shape[0]+p:beta.shape[0]+p+q]
         alpha = int(res_wls.params[end])
         
+    return alpha,beta,phi,theta
+
