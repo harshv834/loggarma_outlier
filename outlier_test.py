@@ -96,6 +96,31 @@ P=log_lkhood(P,alpha_1) # alpha_1 obtained in 3.
 t0=P.index[0]
 Tt0=P['log-likelihood'][0]*(-2)
 
+def Test_stat(Y, mu, alpha):
+    """
+    Y -> Value of Y at t_o
+    mu -> Value of mu at t_o
+    alpha -> Estimated Alpha
+    """
+    return -2*(Y*np.log(alpha+(1e-16)) + mu*(1-alpha))
+Test = np.array([Test_stat(Y[i], mu[i], alpha) for i in A])
+print(Test)
+
+M = 10
+Test_boot = []
+T_o = Test.argsort()[-1]
+for i in range(M):
+    mu = list(np.random.uniform(0,2, max(P, Q)))
+    Y = []
+    for i in range(max(P, Q)):
+        x = np.random.poisson(np.exp(nu[i]))
+        while x==0:
+            x = np.random.poisson(np.exp(nu[i]))
+        Y.append(x)
+    Y_boot, Mu_boot = cal_mu_Y(Beta, Phi, Theta, X, Y, mu)
+    Test_boot.append(Test_stat(Y_boot[T_o], Mu_boot[T_o], 1))
+print(Test_boot)
+
 #5. GENERATE N DATASETS USING PARAMS IN  1.    #BOOTSTRAPPING #Ravi
 #6. for each dataset D in [1,N] do above and calcuate Tt0   #rohit
 #7. Based on obtained D Tt0 values in 6., comparing Tt0 for original data, we decide wether t0 is outier or not #rohit
